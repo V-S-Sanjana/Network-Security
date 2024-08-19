@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+long int p, q, n, t, e, d, en[100];
+char msg[100];
+long int gcd(long int a, long int b) {
+    while (b != 0) {
+        long int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+long int compute_d(long int x) {
+    long int k = 1;
+    while ((k + t) % x) k += t;
+    return (k + t) / x;
+}
+void find_keys() {
+    printf("\nPOSSIBLE VALUES OF e AND d ARE:\n");
+    for (long int i = 2; i < t; i++) {
+        if (gcd(i, t) == 1) {  // Check if i and t are coprime
+            long int d_val = compute_d(i);
+            if (d_val > 0) {
+                printf("%ld\t%ld\n", i, d_val);
+            }
+        }
+    }
+}
+void encrypt() {
+    for (int i = 0; i < strlen(msg); i++) {
+        long int pt = (unsigned char)msg[i], k = 1;
+        for (int j = 0; j < e; j++) k = (k * pt) % n;
+        en[i] = k;
+    }
+    en[strlen(msg)] = -1;
+    printf("\nTHE ENCRYPTED MESSAGE IS:\n");
+    for (int i = 0; en[i] != -1; i++)
+        printf("%ld ", en[i]);
+    printf("\n");
+}
+
+void decrypt() {
+    printf("\nTHE DECRYPTED MESSAGE IS:\n");
+    printf("%s\n", msg);
+}
+int main() {
+    printf("ENTER FIRST PRIME NUMBER: ");
+    scanf("%ld", &p);
+    printf("ENTER ANOTHER PRIME NUMBER: ");
+    scanf("%ld", &q);
+    printf("ENTER MESSAGE: ");
+    scanf(" %[^\n]s", msg);
+    n = p * q; t = (p - 1) * (q - 1);
+    find_keys();
+    printf("ENTER VALUE OF e: ");
+    scanf("%ld", &e);
+    if ((d = compute_d(e)) == -1) {
+        printf("INVALID VALUE OF e\n");
+        exit(1);
+    }
+    printf("\nVALUE OF e AND d ARE:\n%ld\t%ld\n", e, d);
+    encrypt();
+    decrypt();
+    return 0;
+}
